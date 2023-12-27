@@ -11,7 +11,9 @@ import SwiftUI
 struct StandardButton: ViewModifier {
     func body(content: Content) -> some View {
         content
-            .buttonStyle(.bordered)
+            // .buttonStyle(.bordered)
+            .controlSize(.large)
+            .font(.system(size: 72))
     }
 }
 
@@ -22,9 +24,27 @@ extension View {
     }
 }
 
+struct TextStyle: ViewModifier {
+    func body(content: Content) -> some View {
+        content
+            .font(.system(size: 24))
+            .fontWeight(.bold)
+    }
+}
+
+extension View {
+    func textStyle() -> some View {
+        modifier(TextStyle())
+    }
+}
+
 struct ContentView: View {
     // Variables
-    @State private var options = ["rock", "paper", "scissors"].shuffled()
+    let rock = "🪨"
+    let paper = "🗞️"
+    let scissors = "✂️"
+    
+    @State private var options = ["🪨", "🗞️", "✂️"].shuffled()
     @State private var answer = ""
     @State private var checkedAnswer = ""
     @State private var score = 0
@@ -34,36 +54,50 @@ struct ContentView: View {
     // MAIN BODY
     var body: some View {
         VStack {
+            Spacer()
+            Spacer()
             // HStack containing rock, paper, scissors buttons
             HStack {
+                Spacer()
                 Button("🪨") {
                     shuffleOptions()
                     answer = options[0]
-                    checkAnswer(winAgainst: "scissors", loseAgainst: "paper")
+                    checkAnswer(winAgainst: scissors, loseAgainst: paper)
                     checkRoundNumber()
                 }
                 .standardButton()
+                
+                Spacer()
                 
                 Button("🗞️") {
                     shuffleOptions()
                     answer = options[0]
-                    checkAnswer(winAgainst: "rock", loseAgainst: "scissors")
+                    checkAnswer(winAgainst: rock, loseAgainst: scissors)
                     checkRoundNumber()
                 }
                 .standardButton()
                 
+                Spacer()
+                
                 Button("✂️") {
                     shuffleOptions()
                     answer = options[0]
-                    checkAnswer(winAgainst: "paper", loseAgainst: "rock")
+                    checkAnswer(winAgainst: paper, loseAgainst: rock)
                     checkRoundNumber()
                 }
                 .standardButton()
+                
+                Spacer()
             }
-            
+            .padding()
+            Spacer()
             // Text to display computer's choice, and whether the user won/lost/drew
             Text(answer)
-            Text(checkedAnswer)
+                .font(.system(size: 55))
+                .textStyle()
+            Spacer()
+            Text(checkedAnswer).textStyle()
+            Spacer()
             
         }
         .padding()
@@ -83,12 +117,12 @@ struct ContentView: View {
     // Function to check whether the user won/lost/drew against the computer
     func checkAnswer(winAgainst win: String, loseAgainst lose: String) {
         if answer == win {
-            checkedAnswer = "You Win"
+            checkedAnswer = "Round Won"
             score += 1
         } else if answer == lose {
-            checkedAnswer = "You Lose"
+            checkedAnswer = "Round Lost"
         } else {
-            checkedAnswer = "It's a Draw"
+            checkedAnswer = "Round Drawn"
         }
         
         roundNumber += 1
